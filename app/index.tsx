@@ -2,11 +2,13 @@ import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
-interface Pokemon {
+export interface Pokemon {
     name: string;
     image: string;
     imageBack: string;
     types: PokemonType[];
+    stats: PokemonStat[];
+    abilities: PokemonAbility[];
 }
 
 interface PokemonType {
@@ -16,7 +18,22 @@ interface PokemonType {
     }
 }
 
-const colorsByType: Record<string, string> = {
+interface PokemonAbility {
+    ability: {
+        name: string;
+        url: string;
+    }
+}
+
+interface PokemonStat {
+    base_stat: number;
+    stat: {
+        name: string;
+        url: string;
+    }
+}
+
+export const colorsByType: Record<string, string> = {
     grass: "#c4e792",
     fire: "#fca675",
     water: "#9bd1e8",
@@ -46,7 +63,8 @@ export default function Index() {
 
     async function fetchPokemons() {
         try {
-            const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=12");
+            const limit = 10;
+            const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}`);
             const data = await response.json();
             const detailedPokemons = await Promise.all(data.results.map((async (pokemon: any) => {
                 const res = await fetch(pokemon.url);
@@ -67,14 +85,14 @@ export default function Index() {
 
     return (
         <ScrollView contentContainerStyle={{
-            backgroundColor: "#fec",
+            // backgroundColor: "#fec",
             flexDirection: "row",
             flexWrap: "wrap",
             padding: 16,
             gap: 16,
         }}>
             {pokemons.map((pokemon) => (
-                <Link key={pokemon.name} href={{ pathname: "/[name]", params: { name: pokemon.name } }} asChild>
+                <Link key={pokemon.name} href={{ pathname: "/[name]", params: { name: pokemon.name, allPokemons: JSON.stringify(pokemons.map(p => p.name)) } }} asChild>
                     <Pressable style={{
                         backgroundColor: colorsByType[pokemon.types[0].type.name] + "80",
                         padding: 10,
@@ -86,8 +104,7 @@ export default function Index() {
                         justifyContent: "center",
                     }}>
                         <View style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
-                            <Image source={{ uri: pokemon.image }} style={{ width: 100, height: 100 }} />
-                            <Image source={{ uri: pokemon.imageBack }} style={{ width: 100, height: 100 }} />
+                            <Image source={{ uri: pokemon.image }} style={{ width: 150, height: 150 }} />
                         </View>
                         <View>
                             <Text style={styles.name}>{pokemon.name}</Text>
@@ -104,11 +121,14 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 24,
         fontWeight: "bold",
-        textTransform: "capitalize"
+        textTransform: "capitalize",
+        // fontFamily: "PokemonGb"
     },
     type: {
         fontSize: 14,
         fontWeight: "bold",
-        color: "#555555"
+        color: "#555555",
+        textTransform: "capitalize",
+        textAlign: "center",
     }
 })

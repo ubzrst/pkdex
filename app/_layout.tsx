@@ -10,12 +10,12 @@ export default function RootLayout() {
         headerTitleStyle: {
           fontWeight: "bold",
           fontSize: 24,
-        }
+        },
       }} />
     <Stack.Screen
       name="[name]"
       options={{
-        headerBackButtonDisplayMode: "minimal"
+        headerBackButtonDisplayMode: "minimal",
       }} />
   </Stack>;
 }
