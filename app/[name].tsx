@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Pokemon, colorsByType } from "./index";
 
+// TODO: Add a "random" button to the battle selector
+
 // interface Pokemon {
 //     name: string;
 //     abilities: PokemonAbility[];

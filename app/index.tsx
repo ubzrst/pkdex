@@ -2,6 +2,10 @@ import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
+// TODO: Add moves to the Pokemon interface
+// TODO: Add a search bar
+// TODO: Change font to Pokemon GB font
+
 export interface Pokemon {
     name: string;
     image: string;
@@ -9,6 +13,7 @@ export interface Pokemon {
     types: PokemonType[];
     stats: PokemonStat[];
     abilities: PokemonAbility[];
+    // moves: PokemonMove[];
 }
 
 interface PokemonType {
@@ -24,6 +29,10 @@ interface PokemonAbility {
         url: string;
     }
 }
+
+// interface PokemonMove {
+
+// }
 
 interface PokemonStat {
     base_stat: number;
@@ -63,7 +72,7 @@ export default function Index() {
 
     async function fetchPokemons() {
         try {
-            const limit = 10;
+            const limit = 20;
             const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}`);
             const data = await response.json();
             const detailedPokemons = await Promise.all(data.results.map((async (pokemon: any) => {
@@ -76,7 +85,6 @@ export default function Index() {
                     types: details.types
                 }
             })));
-            console.log(detailedPokemons);
             setPokemons(detailedPokemons);
         } catch (error) {
             console.error(error);
