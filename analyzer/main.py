@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
-from services import get_pokemon_data, explain_type_weakness
+from services import get_pokemon_data, explain_battle_strategy
 
 load_dotenv()
 
@@ -19,21 +19,24 @@ app.add_middleware(
 )
 
 @app.get("/analyze")
-async def analyze_pokemon(pokemon: str):
+async def analyze_pokemon(player: str, opponent: str):
     if not os.environ.get("OPENAI_API_KEY"):
         raise HTTPException(status_code=500, detail="OPENAI_API_KEY environment variable not set")
         
     try:
         # 1. Fetch data from PokeAPI
-        pokemon_name, types = get_pokemon_data(pokemon)
+        player_name, player_types, player_stats = get_pokemon_data(player)
+        opponent_name, opponent_types, opponent_stats = get_pokemon_data(opponent)
         
         # 2. Get explanation from LangChain
-        explanation = explain_type_weakness(pokemon_name, types)
+        simulation = explain_battle_strategy(player_name, player_types, player_stats, opponent_name, opponent_types, opponent_stats)
         
         return {
-            "pokemon": pokemon_name,
-            "types": types,
-            "explanation": explanation
+            "player": player_name,
+            "player_types": player_types,
+            "opponent": opponent_name,
+            "opponent_types": opponent_types,
+            "simulation": simulation.dict()
         }
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
